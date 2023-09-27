@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const toDoTask = require("./models/toDoTask");
+const authController = require("./controllers/authController");
 
 dotenv.config({ path: "./config.env" });
 
@@ -18,28 +19,30 @@ app.set("view engine", "ejs");
 
 const port = 1101;
 
-//get all the task
-app.get("/", async (req, res) => {
-  try {
-    tasks = await toDoTask.find({});
-    res.render("todo.ejs", { todoTasks: tasks });
-  } catch (err) {
-    res.redirect("/");
-  }
-});
+app.post("/signup", authController.signUp);
+app.post("/login", authController.login);
 
-//create the task
-app.post("/", async (req, res) => {
-  try {
-    const task = await toDoTask.create({
-      content: req.body.content,
-    });
+app
+  .route("/")
+  .get(async (req, res) => {
+    try {
+      tasks = await toDoTask.find({});
+      res.render("todo.ejs", { todoTasks: tasks });
+    } catch (err) {
+      res.redirect("/");
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      const task = await toDoTask.create({
+        content: req.body.content,
+      });
 
-    res.redirect("/");
-  } catch (err) {
-    res.redirect("/");
-  }
-});
+      res.redirect("/");
+    } catch (err) {
+      res.redirect("/");
+    }
+  });
 
 app
   .route("/edit/:id")
