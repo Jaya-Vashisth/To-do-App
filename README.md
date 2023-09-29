@@ -5,7 +5,7 @@
 
 Welcome to the To-Do App with User Authentication project! This application is built using Node.js, Express, and MongoDB, allowing users to create, read, update, and delete their to-do tasks after authenticating.
 
-You can access the hosted application [[here](https://thankful-jay-bandanna.cyclic.cloud/signup)]([link-to-hosted-app](https://thankful-jay-bandanna.cyclic.cloud/signup)).
+You can access the hosted application [https://thankful-jay-bandanna.cyclic.cloud/signup]([https://thankful-jay-bandanna.cyclic.cloud/signup]).
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ You can access the hosted application [[here](https://thankful-jay-bandanna.cycl
 
 ## Demo
 
-You can access a live demo of the To-Do App [here]([link-to-demo](https://thankful-jay-bandanna.cyclic.cloud/signup)).
+You can access a live demo of the To-Do App [https://thankful-jay-bandanna.cyclic.cloud/signup]([https://thankful-jay-bandanna.cyclic.cloud/signup]).
 
 Kindly use this link in Postman for better understanding as responses have to be sent in JSON file.
 
