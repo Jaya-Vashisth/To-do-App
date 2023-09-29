@@ -34,7 +34,10 @@ You can access the hosted application [here](link-to-hosted-app).
 
 ## Demo
 
-You can access a live demo of the To-Do App [here](link-to-demo).
+You can access a live demo of the To-Do App [here]([link-to-demo](https://thankful-jay-bandanna.cyclic.cloud/signup)).
+
+Kindly use this link in Postman for better understanding as responses have to be sent in JSON file.
+
 
 ## Installation
 
