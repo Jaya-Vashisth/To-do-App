@@ -1,87 +1,62 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const ratelimit = require("express-rate-limit");
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const toDoTask = require("./models/toDoTask");
-const authController = require("./controllers/authController");
+
+const routes = require("./routes/userRoutes");
 
 dotenv.config({ path: "./config.env" });
 
+//start express app
 const app = express();
 
-app.use(express.json());
-app.use("/static", express.static("public"));
-//middleware
-app.use(express.urlencoded({ extended: true }));
-
-const DB = process.env.DATABASE;
-
-app.set("view engine", "ejs");
-
 const port = 1101;
-
-app.post("/signup", authController.signUp);
-app.post("/login", authController.login);
-
-app
-  .route("/")
-  .get(async (req, res) => {
-    try {
-      tasks = await toDoTask.find({});
-      res.render("todo.ejs", { todoTasks: tasks });
-    } catch (err) {
-      res.redirect("/");
-    }
-  })
-  .post(async (req, res) => {
-    try {
-      const task = await toDoTask.create({
-        content: req.body.content,
-      });
-
-      res.redirect("/");
-    } catch (err) {
-      res.redirect("/");
-    }
-  });
-
-app
-  .route("/edit/:id")
-  //update the task
-  .get(async (req, res) => {
-    const id = req.params.id;
-    const tasks = await toDoTask.find({});
-
-    res.render("todoUpdate.ejs", { todoTasks: tasks, idTask: id });
-  })
-  .post(async (req, res) => {
-    const id = req.params.id;
-    try {
-      const task = await toDoTask.findByIdAndUpdate(id, {
-        content: req.body.content,
-      });
-
-      res.redirect("/");
-    } catch (err) {
-      res.status(500, err);
-      res.redirect("/");
-    }
-  });
-
-//delete the task
-app.route("/remove/:id").get(async (req, res) => {
-  const id = req.params.id;
-  try {
-    await toDoTask.findByIdAndRemove(id);
-    res.redirect("/");
-  } catch (err) {
-    res.status(500, err);
-    res.redirect("/");
-  }
-});
+const DB = process.env.DATABASE;
 
 //mongodb connection
 mongoose.connect(DB).then((con) => {
   console.log("connected to Database");
+});
+
+//GLOBAL MIDDLEWARES
+
+//set security http header
+app.use(helmet());
+
+//develoment logging
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+
+//limit request from same API
+const limiter = ratelimit({
+  max: 200,
+  windosMs: 60 * 60 * 1000,
+  message: "Too many requests from this IP. Please try again in an hour",
+});
+
+//body parser , reading data from body into req.body
+app.use(express.json({ limit: "100kb" }));
+app.use(express.urlencoded({ extended: true, limit: "100kb" }));
+app.use(cookieParser());
+
+//data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+//data sanitization against XSS
+app.use(xss());
+
+app.use("/", routes);
+
+//handler for url that are not define
+app.use("*", (req, res) => {
+  return res.status(400).json({
+    status: "Failed",
+    message: `Cann't find ${req.originalUrl} on the server`,
+  });
 });
 
 //sever

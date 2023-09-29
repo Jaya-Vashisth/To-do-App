@@ -33,6 +33,8 @@ const UserSchema = mongoose.Schema({
     validate: [validator.isEmail, "Please provide a valid email"],
     lowercase: true,
   },
+
+  passwordChangedAt: Date,
 });
 
 //hash the password
@@ -47,12 +49,21 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.methods.correctPassword = async function (
-  validPassword,
-  loginPassword
+  loginPassword,
+  validPassword
 ) {
   return await bcrypt.compare(loginPassword, validPassword);
 };
 
+UserSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTime = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+
+    return JWTTimestamp < changedTime;
+  }
+
+  return false;
+};
 User = mongoose.model("User", UserSchema);
 
 module.exports = User;
