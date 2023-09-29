@@ -15,7 +15,7 @@ dotenv.config({ path: "./config.env" });
 //start express app
 const app = express();
 
-const port = 1101;
+const port = process.env.PORT || 1101;
 const DB = process.env.DATABASE;
 
 //mongodb connection

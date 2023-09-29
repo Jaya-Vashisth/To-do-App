@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("./../controllers/authController");
-const todoContoller = require("./../controllers/todoController");
+const authController = require("../controllers/authController");
+const todoContoller = require("../controllers/todoController");
 
 //user sign in and login
 

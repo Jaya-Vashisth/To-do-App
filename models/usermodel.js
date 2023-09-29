@@ -48,6 +48,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+//to compare entered password to user password
 UserSchema.methods.correctPassword = async function (
   loginPassword,
   validPassword
@@ -55,6 +56,7 @@ UserSchema.methods.correctPassword = async function (
   return await bcrypt.compare(loginPassword, validPassword);
 };
 
+//check when the password changed last time
 UserSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTime = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
@@ -64,6 +66,7 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 
   return false;
 };
+
 User = mongoose.model("User", UserSchema);
 
 module.exports = User;

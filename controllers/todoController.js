@@ -31,7 +31,12 @@ exports.getAllTask = async (req, res, next) => {
       })
       .sort({ data: -1 });
 
-    res.json(todos);
+    res.status(200).json({
+      status: "sucsess",
+      data: {
+        todos,
+      },
+    });
   } catch (err) {
     console.log(err.message);
     res.status(500).send("Server Error");
